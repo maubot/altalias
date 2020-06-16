@@ -68,6 +68,7 @@ class AltAliasBot(Plugin):
                 "formats": [regex.pattern for regex in info.formats]
             } for room_id, info in self._rooms.items()
         }
+        self.config.save()
 
     @command.new(lambda self: self._command, aliases=lambda self, val: val in self._aliases,
                  help="Manage alternate aliases")
