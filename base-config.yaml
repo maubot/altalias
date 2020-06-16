@@ -1,0 +1,11 @@
+# The command without the ! prefix. The first item is the main command, the rest are aliases.
+command:
+- altalias
+- alias
+# Allowed alias regexes for rooms. This is automatically filled by !altalias allow
+rooms: {}
+# Whether or not alias localparts should required to be lowercase
+require_lowercase: true
+# Users who are always managed to configure the bot and add aliases, regardless of room permissions.
+admins:
+- "@user:example.com"

@@ -1,0 +1,9 @@
+maubot: 0.1.0
+id: xyz.maubot.altalias
+version: 1.0.0
+license: AGPL-3.0-or-later
+modules:
+- altalias
+main_class: AltAliasBot
+extra_files:
+- base-config.yaml
