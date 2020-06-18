@@ -14,6 +14,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from typing import Set, Type, Dict, NamedTuple, Pattern, List, Optional
+from types import FrameType
+from contextlib import contextmanager
+import signal
 import html
 import re
 
@@ -35,6 +38,20 @@ class Config(BaseProxyConfig):
         helper.copy("admins")
         helper.copy("require_lowercase")
         helper.copy("rooms")
+
+
+def raise_timeout(sig: signal.Signals, frame_type: FrameType) -> None:
+    raise TimeoutError()
+
+
+@contextmanager
+def timeout(time: float = 1) -> None:
+    signal.signal(signal.SIGALRM, raise_timeout)
+    signal.setitimer(signal.ITIMER_REAL, time)
+    try:
+        yield
+    finally:
+        signal.alarm(0)
 
 
 class AltAliasBot(Plugin):
@@ -149,9 +166,10 @@ class AltAliasBot(Plugin):
                 if self._localpart_matches(existing_alias, localpart):
                     return True
         else:
-            for regex in cfg.formats:
-                if regex.fullmatch(alias):
-                    return True
+            with timeout(max(len(cfg.formats) * 0.5, 2)):
+                for regex in cfg.formats:
+                    if regex.fullmatch(alias):
+                        return True
         return False
 
     async def _publish_aliases(self, evt: MessageEvent, alias: str,
